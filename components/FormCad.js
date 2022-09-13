@@ -1,17 +1,15 @@
-import * as React from "react";
-import { View, Text } from "react-native";
+import * as React from 'react'
+import { View } from 'react-native'
+
+import Header from './Header'
 
 // component
-import InputOptions from "./InputOptions";
-import Header from "./Header";
-
-const FormCad = () => { 
-    return(
-        <View>
-            <Header theader={"Cadastro"}/>
-            
-        </View>
-    )
+const FormCad = () => {
+  return (
+    <View>
+      <Header theader={'Cadastro'} />
+    </View>
+  )
 }
 
 export default FormCad

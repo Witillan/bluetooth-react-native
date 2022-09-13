@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import * as React from 'react'
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import Icon from 'react-native-vector-icons/Ionicons'
 
 const RadioButton = ({getValue}) => {
 
@@ -75,4 +75,4 @@ const style = StyleSheet.create({
     }
 })
 
-export default RadioButton;
+export default RadioButton

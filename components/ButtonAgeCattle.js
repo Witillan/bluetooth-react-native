@@ -1,13 +1,13 @@
-import * as React from "react";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import * as React from 'react'
+import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 
 const ButtonAgeCattle = ({gettingValue}) => {
 
-    const [isPressedOne, setisPressedOne] = React.useState(false);
-    const [isPressedTwo, setisPressedTwo] = React.useState(false);
-    const [isPressedThree, setisPressedThree] = React.useState(false);
-    const [isPressedFour, setisPressedFour] = React.useState(false);
-    const [isPressedFive, setisPressedFive] = React.useState(false);
+    const [isPressedOne, setisPressedOne] = React.useState(false)
+    const [isPressedTwo, setisPressedTwo] = React.useState(false)
+    const [isPressedThree, setisPressedThree] = React.useState(false)
+    const [isPressedFour, setisPressedFour] = React.useState(false)
+    const [isPressedFive, setisPressedFive] = React.useState(false)
     let gettingAllStates = []
 
     gettingAllStates.push(isPressedOne, isPressedTwo, isPressedThree, isPressedFour, isPressedFive)
@@ -22,7 +22,7 @@ const ButtonAgeCattle = ({gettingValue}) => {
         //pega a key como item do foreach
         let result = {}
         gettingAllStates.forEach((item, index) => {
-            result[item] = (result[item] || 0) + 1;
+            result[item] = (result[item] || 0) + 1
         })
         
         if(result?.true > 1){
@@ -70,30 +70,30 @@ const ButtonAgeCattle = ({gettingValue}) => {
     }, [isPressedOne, isPressedTwo, isPressedThree, isPressedFour, isPressedFive])
     return(
         <>
-            <TouchableOpacity style={isPressedOne ? style.containerButtonPressed : style.containerButton} onPress={()=>{setisPressedOne(!isPressedOne);gettingValue(dataToSend[0].id)}}>
+            <TouchableOpacity style={isPressedOne ? style.containerButtonPressed : style.containerButton} onPress={()=>{setisPressedOne(!isPressedOne); gettingValue(dataToSend[0].id)}}>
                 <Text style={isPressedOne ? style.textPressed : style.textColor}>{dataToSend[0].value}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={isPressedTwo ? style.containerButtonPressed : style.containerButton} onPress={()=>{setisPressedTwo(!isPressedTwo);gettingValue(dataToSend[1].id)}}>
+            <TouchableOpacity style={isPressedTwo ? style.containerButtonPressed : style.containerButton} onPress={()=>{setisPressedTwo(!isPressedTwo); gettingValue(dataToSend[1].id)}}>
                 <Text style={isPressedTwo ? style.textPressed : style.textColor}>{dataToSend[1].value}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={isPressedThree ? style.containerButtonPressed : style.containerButton} onPress={()=>{setisPressedThree(!isPressedThree);gettingValue(dataToSend[2].id)}}>
+            <TouchableOpacity style={isPressedThree ? style.containerButtonPressed : style.containerButton} onPress={()=>{setisPressedThree(!isPressedThree); gettingValue(dataToSend[2].id)}}>
                 <Text style={isPressedThree ? style.textPressed : style.textColor}>{dataToSend[2].value}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={isPressedFour ? style.containerButtonPressed : style.containerButton} onPress={()=>{setisPressedFour(!isPressedFour);gettingValue(dataToSend[3].id)}}>
+            <TouchableOpacity style={isPressedFour ? style.containerButtonPressed : style.containerButton} onPress={()=>{setisPressedFour(!isPressedFour); gettingValue(dataToSend[3].id)}}>
                 <Text style={isPressedFour ? style.textPressed : style.textColor}>{dataToSend[3].value}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={isPressedFive ? style.containerButtonPressed : style.containerButton} onPress={()=>{setisPressedFive(!isPressedFive);gettingValue(dataToSend[4].id)}}>
+            <TouchableOpacity style={isPressedFive ? style.containerButtonPressed : style.containerButton} onPress={()=>{setisPressedFive(!isPressedFive); gettingValue(dataToSend[4].id)}}>
                 <Text style={isPressedFive ? style.textPressed : style.textColor}>{dataToSend[4].value}</Text>
             </TouchableOpacity>
         </>
     )
 }
 
-export default ButtonAgeCattle;
+export default ButtonAgeCattle
 
 const style = StyleSheet.create({
     containerButton: {

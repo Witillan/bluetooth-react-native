@@ -1,11 +1,11 @@
-import React from "react";
+import React from "react"
 import { 
     View, 
     StyleSheet, 
     ScrollView, 
     Text, 
     TouchableOpacity 
-} from "react-native";
+} from "react-native"
 
 const DevicesLists = ({devices, valFunc}) => {
     
@@ -36,7 +36,7 @@ const DevicesLists = ({devices, valFunc}) => {
     )
 }
 
-export default DevicesLists;
+export default DevicesLists
 
 const style = StyleSheet.create({
     container: {

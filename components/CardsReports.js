@@ -1,18 +1,6 @@
-import * as React from "react";
-import {
-    Button,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    View,
-    PermissionsAndroid,
-    Alert,
-    TouchableOpacity,
-    ScrollView,
-    TouchableHighlight,
-    KeyboardAvoidingView
-  } from 'react-native';
-  import Icon from 'react-native-vector-icons/FontAwesome';
+import * as React from 'react'
+import { Text, TouchableOpacity, View } from 'react-native'
+import Icon from 'react-native-vector-icons/FontAwesome'
 
   // colocar os props
 const CardsReports = () => {

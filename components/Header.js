@@ -1,16 +1,16 @@
-import * as React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import * as React from 'react'
+import { View, Text, StyleSheet } from 'react-native'
 
-const Header = ({theader}) => {
-    return(
+const Header = ({ theader }) => {
+    return (
         <View style={style.container}>
-            <Text style={{fontSize: 30}}>{theader}</Text>
-            <View style={style.line}/>
+            <Text style={{ fontSize: 30 }}>{theader}</Text>
+            <View style={style.line} />
         </View>
     )
 }
 
-export default Header;
+export default Header
 
 const style = StyleSheet.create({
     container: {

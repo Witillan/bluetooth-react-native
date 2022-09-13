@@ -1,5 +1,5 @@
-import * as React from "react";
-import { TouchableHighlight } from "react-native";
+import * as React from "react"
+import { TouchableHighlight } from "react-native"
 
 const ButtonsOptions = ({title, color, effect}) => {
     return(
@@ -9,4 +9,4 @@ const ButtonsOptions = ({title, color, effect}) => {
     )
 }
 
-export default ButtonsOptions;
+export default ButtonsOptions
