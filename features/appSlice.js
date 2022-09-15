@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialState = {
     requestResult: null,
-    permissions: null,
+    devicesResult: null,
 }
 
 export const appSlice = createSlice({
@@ -14,16 +14,16 @@ export const appSlice = createSlice({
         requestSender: (state, action) => {
             state.requestResult = action.payload.requestResult
         },
-        permissionsSender: (state, action) => {
-            state.permissions = action.payload.permissions
+        devicesSender: (state, action) => {
+            state.devicesResult = action.payload.devicesResult
         },
     },
 })
 
 export const { requestSender } = appSlice.actions
-export const { permissionsSender } = appSlice.actions
+export const { devicesSender } = appSlice.actions
 
 export const selectRequestResult = (state) => state.app.requestResult
-export const selectPermissions = (state) => state.app.permissions
+export const selectDevicesResult = (state) => state.app.devicesResult
 
 export default appSlice.reducer

@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Buffer } from 'buffer'
 import React, { useCallback, useState } from 'react'
-import { Alert, PermissionsAndroid, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import base64 from 'react-native-base64'
 import { BleManager, NativeDevice, Service } from 'react-native-ble-plx'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -9,158 +9,111 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Header from '../components/Header'
 import InputOptions from '../components/InputOptions'
 import ModalLoading from '../components/Modal'
-import { useSelector } from 'react-redux'
 import { useNavigation } from '@react-navigation/native'
+import { useDispatch, useSelector } from 'react-redux'
+import { devicesSender } from '../features/appSlice'
 
 // icons
 // components
 const Cadastro = () => {
   const navigation = useNavigation()
-  const devicePermissions = useSelector((state) => state.counter.permissions)
+  const dispatch = useDispatch();
+  const devicesResultFromStore = useSelector((state) => state.counter.devicesResult)
 
   const manager = new BleManager()
   const serv = new Service(NativeDevice, manager)
 
   // States Of The Application
-  const [weightt, setWeightt] = useState()
-  const [devices, setDevices] = useState([])
+  const [weightt, setWeight] = useState()
+  const [focus, setFocus] = useState()
 
   const [waitingConnect, setWaitingConnect] = useState(false)
+  // const [devices, setDevices] = useState([])
 
-  // permissions
-  const requestLocationPermission = async () => {
-    try {
-      await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, {
-        title: 'permissão de localização para o bluetooth scanning',
-        message: 'Nós precisamos dessa permissão para rodar o bluetooth',
-        buttonNeutral: 'Perguntar depois',
-        buttonNegative: 'Cancelar',
-        buttonPositive: 'OK',
-      },
-      )
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  const requestBLUETOOTH_ADMINPermission = async () => {
-    try {
-      await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT, {
-        title: 'Location permission for bluetooth scanning',
-        message: 'Nós precisamos dessa permissão para rodar o bluetooth',
-        buttonNeutral: 'Perguntar depois',
-        buttonNegative: 'Cancelar',
-        buttonPositive: 'OK',
-      },
-      )
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  const BLUETOOTH_ADVERTISErequestPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN, {
-        title: 'Location permission for bluetooth scanning',
-        message: 'Nós precisamos dessa permissão para rodar o bluetooth',
-        buttonNeutral: 'Perguntar depois',
-        buttonNegative: 'Cancelar',
-        buttonPositive: 'OK',
-      },
-      )
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
-  const permissions = useCallback(() => {
-    console.log('--------------- Teste -----------------')
-    requestLocationPermission()
-    requestBLUETOOTH_ADMINPermission()
-    BLUETOOTH_ADVERTISErequestPermission()
-  }, [])
   // usar redux para fazer o dispatch do device, para nao precisar fazendo o scan sempre
   // ta dando erro nisso, tem que concertar
   // ou colocar no asyncStorage, já funciona
-  const ScanAndConnect = () => {
-    console.log(devicePermissions)
-    permissions()
+  const ScanAndConnect = async () => {
+    setWaitingConnect(true)
     manager.startDeviceScan(null, { allowDuplicates: false }, (error, listOfDevices) => {
       if (error) {
         // erro resolvido fazendo a request do ACCESS_FINE_LOCATION
         console.log(error)
         return
       }
-      if (listOfDevices.id == "C7:C6:8B:C9:9F:2D") {
-        setDevices(oldArray => [...oldArray, listOfDevices])
+      if (listOfDevices.id == 'C7:C6:8B:C9:9F:2D') {
         manager.stopDeviceScan()
+        dispatch(devicesSender({ devicesResult: JSON.stringify([listOfDevices]) }))
+        // setDevices(oldArray => [...oldArray, listOfDevices])
         setWaitingConnect(false)
       }
     })
   }
 
-  React.useEffect(() => {
-    const subscription = manager.onStateChange((state) => {
-      if (state === 'PoweredOn') {
-        console.log("Bluetooth ligado")
-      } else {
-        Alert.alert("Bluetooth desligado", "Você precisa ligar o bluetooth e conectar na balança", [
-          {
-            text: "Cancelar",
-            onPress: () => console.log("apertou cancelar"),
-            style: "cancel"
-          },
-          {
-            text: "ok",
-            onPress: () => console.log("apertou ok"),
-          }
-        ])
-      }
-    }, true)
+  // React.useEffect(() => {
+  //   const subscription = manager.onStateChange((state) => {
+  //     if (state === 'PoweredOn') {
+  //       console.log('Bluetooth ligado')
+  //     } else {
+  //       Alert.alert('Bluetooth desligado', 'Você precisa ligar o bluetooth e conectar na balança', [
+  //         {
+  //           text: 'Cancelar',
+  //           onPress: () => console.log('apertou cancelar'),
+  //           style: 'cancel'
+  //         },
+  //         {
+  //           text: 'Ok',
+  //           onPress: () => console.log('apertou ok'),
+  //         }
+  //       ])
+  //     }
+  //   }, true)
 
-    return () => {
-      subscription.remove()
-    }
+  //   return () => {
+  //     subscription.remove()
+  //   }
 
-  }, [manager])
+  // }, [manager])
 
-  const getTheCurrentWeight = () => {
-    devices[0]
-      .connect()
+  const getTheCurrentWeight = useCallback(() => {
+    console.log('----------------------------------------')
+    let device = JSON.parse(devicesResultFromStore)
+    console.log(device)
+    console.log(devicesResultFromStore)
+    console.log('----------------------------------------')
+    device.connect()
       .then((deviceConnected) => {
         return deviceConnected.discoverAllServicesAndCharacteristics()
       })
       .then((data) => {
 
-        let base64Stringg = Buffer.from("{RW}").toString('base64')
+        let base64Stringg = Buffer.from('{RW}').toString('base64')
 
-        data.writeCharacteristicWithoutResponseForService("6e400001-b5a3-f393-e0a9-e50e24dcca9e", "6e400002-b5a3-f393-e0a9-e50e24dcca9e", base64Stringg)
+        data.writeCharacteristicWithoutResponseForService('6e400001-b5a3-f393-e0a9-e50e24dcca9e', '6e400002-b5a3-f393-e0a9-e50e24dcca9e', base64Stringg)
           .then(() => {
-            data.monitorCharacteristicForService("6e400001-b5a3-f393-e0a9-e50e24dcca9e", "6e400003-b5a3-f393-e0a9-e50e24dcca9e", (err, cha) => {
+            data.monitorCharacteristicForService('6e400001-b5a3-f393-e0a9-e50e24dcca9e', '6e400003-b5a3-f393-e0a9-e50e24dcca9e', (err, cha) => {
               try {
-                console.log(cha.value)
                 let weightTransformed = base64.decode(cha.value)
                 let weightString = weightTransformed.replace('[', '');
                 let weight = weightString.replace(']', '');
-                console.log(weightTransformed)
-                Alert.alert("Peso", `Importar o peso: ${weightTransformed}`, [
-                  {
-                    text: "Errado",
-                    onPress: () => console.log("apertou cancelar"),
-                    style: "cancel"
-                  },
-                  {
-                    text: "Correto",
-                    onPress: () => setWeightt(weight),
-                  }
-                ])
+                if (weight === weightt) {
+                  Alert.alert('Novamente', `Mesmo peso `)
+                } else {
+                  Alert.alert('Peso', `Importar o peso: ${weightTransformed}`, [
+                    {
+                      text: 'Errado',
+                      onPress: () => console.log('apertou cancelar'),
+                      style: 'cancel'
+                    },
+                    {
+                      text: 'Correto',
+                      onPress: () => { setWeight(weight), setFocus(true) },
+                    }
+                  ])
+                }
               } catch (err) {
                 if (err) {
-                  console.log("error", err)
-                  getTheCurrentWeight()
+                  console.log('error', err)
                 }
               }
             })
@@ -171,16 +124,16 @@ const Cadastro = () => {
       })
       .finally(() => { })
 
-    devices[0].onDisconnected((err, dev) => {
+    device[0].onDisconnected((err, dev) => {
       console.log(dev)
     })
-  }
+  }, [])
 
   const action = [
     {
-      text: "Home",
-      icon: <Icon name="home" size={30} color={'#E9FFF9'} />,
-      name: "home",
+      text: 'Home',
+      icon: <Icon name='home' size={30} color='#E9FFF9' />,
+      name: 'home',
       position: 1
     },
   ]
@@ -192,33 +145,30 @@ const Cadastro = () => {
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <View style={{ flexDirection: 'row' }}>
             <Text style={{ marginRight: 10, fontWeight: '800', color: '#E9FFF9', fontSize: 20 }}>Scan & connect</Text>
-            <TouchableOpacity onPress={() => {
-              ScanAndConnect(),
-                setWaitingConnect(true)
-            }}>
-              <Icon name="clipboard-search" size={30} color={'#E9FFF9'} />
+            <TouchableOpacity onPress={() => ScanAndConnect()}>
+              <Icon name='clipboard-search' size={30} color='#E9FFF9' />
             </TouchableOpacity>
           </View>
           <View style={{ flexDirection: 'row' }}>
-            <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-              <Icon name="home" size={30} color={'#E9FFF9'} />
+            <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+              <Icon name='home' size={30} color='#E9FFF9' />
             </TouchableOpacity>
           </View>
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {devices.length > 0 ? (
+        {(JSON.stringify(devicesResultFromStore))?.length > 0 ? (
           <View>
             <View style={styles.containerButtonsForAction}>
               <TouchableOpacity onPress={getTheCurrentWeight} style={styles.buttonsForActions}>
                 <Text style={{ fontSize: 20, color: '#E9FFF9', marginRight: 5 }}>Peso</Text>
-                <Icon name='cow' size={24} color={'#E9FFF9'} />
+                <Icon name='cow' size={24} color='#E9FFF9' />
               </TouchableOpacity>
             </View>
             {/* Form */}
             <View>
-              <Header theader={"Cadastro"} />
-              <InputOptions weight={weightt} />
+              <Header theader='Cadastro' />
+              <InputOptions weight={weightt} focus={focus} />
             </View>
           </View>
         ) : (
@@ -230,12 +180,15 @@ const Cadastro = () => {
               style={styles.containerButtonToInstructions}
               onPress={() => navigation.navigate('Instructions')}>
               <Text style={{ color: '#424242', fontWeight: 'bold', fontSize: 18, textAlign: 'center', marginRight: 5 }}>Leia aqui</Text>
-              <Icon name="tooltip-text" size={30} color={'#E9FFF9'} />
+              <Icon name='tooltip-text' size={30} color='#E9FFF9' />
             </TouchableOpacity>
           </View>
         )}
       </ScrollView>
-      <ModalLoading open={waitingConnect} />
+      <ModalLoading open={waitingConnect} setOpen={() => {
+        setWaitingConnect(false)
+        navigation.navigate('Instructions')
+      }} />
     </SafeAreaView>
   )
 }
@@ -256,7 +209,7 @@ const styles = StyleSheet.create({
   mainHeader: {
     width: '100%',
     padding: 12,
-    backgroundColor: "#3F51B5",
+    backgroundColor: '#3F51B5',
     borderBottomColor: 'rgba(0, 0, 0, 0.3)',
     borderBottomWidth: 3
   },
@@ -266,7 +219,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 15,
     borderRadius: 5,
-    backgroundColor: "#424242",
+    backgroundColor: '#424242',
     width: 100,
   },
   containerButtonsForAction: {
@@ -281,7 +234,7 @@ const styles = StyleSheet.create({
     width: 70,
     alignItems: 'center',
     padding: 15,
-    backgroundColor: "#424242"
+    backgroundColor: '#424242'
   },
   instructions: {
     elevation: 10,
