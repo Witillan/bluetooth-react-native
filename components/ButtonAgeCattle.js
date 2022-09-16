@@ -67,10 +67,6 @@ const ButtonAgeCattle = ({gettingValue}) => {
             setisPressedFive(false)
         }
 
-        if (!isPressedOne && !isPressedTwo && !isPressedThree && !isPressedFour && !isPressedFive){
-            gettingValue('')
-        }
-
     }, [isPressedOne, isPressedTwo, isPressedThree, isPressedFour, isPressedFive])
     return(
         <>

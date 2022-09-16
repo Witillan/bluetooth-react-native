@@ -1,17 +1,40 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Buffer } from 'buffer';
 import React, { useEffect, useState } from 'react';
-import { Alert, PermissionsAndroid, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import base64 from 'react-native-base64';
-import { BleManager, NativeDevice, Service } from 'react-native-ble-plx';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useDispatch, useSelector } from 'react-redux';
-
-import Header from '../components/Header';
-import InputOptions from '../components/InputOptions';
+import {
+  Button,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  PermissionsAndroid,
+  Alert,
+  TouchableOpacity,
+  ScrollView,
+  TouchableHighlight,
+  KeyboardAvoidingView
+} from 'react-native';
+import { useDispatch } from 'react-redux';
+import { requestDevice } from '../features/appSlice';
+import { useSelector } from 'react-redux';
 
 // icons
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 // components
+import ButtonsOptions from '../components/ButtonsOptions';
+import InputOptions from "../components/InputOptions";
+import Header from "../components/Header";
+import RadioButton from '../components/RadioButton';
+import ButtonAgeCattle from '../components/ButtonAgeCattle';
+
+import { BleManager } from 'react-native-ble-plx';
+import { Service } from 'react-native-ble-plx';
+import { NativeDevice } from 'react-native-ble-plx';
+import base64 from 'react-native-base64'
+import { Buffer, INSPECT_MAX_BYTES } from 'buffer';
+import { deepStrictEqual } from 'assert';
+import { FloatingAction } from 'react-native-floating-action';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const Cadastro = ({navigation}) => {
 
   const manager = new BleManager();
@@ -217,9 +240,10 @@ const WriteAndReadDataRequestPermission = async () => {
         }
 
         if(listOfDevices.id == "C7:C6:8B:C9:9F:2D"){
-                    
+          dispatch(requestDevice({
+            requestDevice: devices[0]
+          }))
           setDevices(oldArray=>[...oldArray, listOfDevices])
-          console.log(devices)
           manager.stopDeviceScan()
         }
 
@@ -324,12 +348,10 @@ const WriteAndReadDataRequestPermission = async () => {
 
             try{
 
-              let weightTransformed = base64.decode(cha.value)
-                let weightString = weightTransformed.replace('[', '');
-                let peso = weightString.replace(']', '');
+              let weight_transformed = base64.decode(cha.value)
 
-              console.log(peso)
-              Alert.alert("Peso", `Importar o peso: ${peso}`, [
+              console.log(weight_transformed)
+              Alert.alert("Peso", `Importar o peso: ${weight_transformed}`, [
                 {
                   text: "Errado",
                   onPress: () => console.log("apertou cancelar"),
@@ -337,7 +359,7 @@ const WriteAndReadDataRequestPermission = async () => {
                 },
                 {
                   text: "Correto",
-                  onPress: () => setWeightt(peso),
+                  onPress: () => setWeightt(weight_transformed),
                 }
               ])
 
@@ -345,6 +367,7 @@ const WriteAndReadDataRequestPermission = async () => {
 
               if(err){
                 console.log("error", err)
+                getTheCurrentWeight()
               }
 
             }
@@ -358,7 +381,7 @@ const WriteAndReadDataRequestPermission = async () => {
       .catch((err)=>{
 
         alert(err)
-        getTheCurrentWeight()
+
       })
       .finally(()=>{})
 
@@ -427,7 +450,7 @@ const WriteAndReadDataRequestPermission = async () => {
             {/* Form */}
             <View>
               <Header theader={"Cadastro"}/>
-              <InputOptions peso={Weightt}/>
+              <InputOptions weight={Weightt}/>
             </View>
           </View>
           ) : (
